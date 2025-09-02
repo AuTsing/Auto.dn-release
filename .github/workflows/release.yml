@@ -1,26 +1,28 @@
 name: Release
 
 on:
-    push:
-        tags:
-            - 'v*.*.*'
+    repository_dispatch:
+        types: [auto-generate-release]
 
 jobs:
-    build:
+    run-on-dispatch:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
               uses: actions/checkout@v4
+
             - name: Get Tag Name
-              id: tag_name
+              id: get_tag_name
               shell: bash
               run: |
-                  echo "version=$(echo ${GITHUB_REF#refs/tags/v})" >> $GITHUB_OUTPUT
+                  echo "version=${{ github.event.client_payload.tag }}" >> $GITHUB_OUTPUT
+
             - name: Read Changelog
               id: read_changelog
               uses: mindsers/changelog-reader-action@v2
               with:
-                  version: ${{ steps.tag_name.outputs.version }}
+                  version: ${{ steps.get_tag_name.outputs.version }}
+
             - name: Release
               uses: softprops/action-gh-release@v2
               with:
