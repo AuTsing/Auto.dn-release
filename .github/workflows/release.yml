@@ -20,14 +20,14 @@ jobs:
             - name: Checkout Auto.dn repo
               uses: actions/checkout@v4
               with:
-                  repository: AuTsing/denofa
+                  repository: AuTsing/Auto.dn
                   ref: refs/tags/v${{ steps.read_version.outputs.version }}
-                  path: tmp/denofa
+                  path: tmp/Autodn
                   token: ${{ secrets.DENOFA_TOKEN }}
 
             - name: Copy files
               run: |
-                  cp tmp/denofa/CHANGELOG.md ./CHANGELOG.md
+                  cp tmp/Autodn/CHANGELOG.md ./CHANGELOG.md
 
             - name: Update readme
               run: |
@@ -50,6 +50,15 @@ jobs:
               uses: mindsers/changelog-reader-action@v2
               with:
                   version: ${{ steps.read_version.outputs.version }}
+
+            - name: Download release
+              env:
+                  GITHUB_TOKEN: ${{ secrets.DENOFA_TOKEN }}
+              run: |
+                  gh release download v${{ steps.read_version.outputs.version }} \
+                    --repo AuTsing/Auto.dn \
+                    --pattern "Denofa_v${{ steps.read_version.outputs.version }}_release.apk" \
+                    --dir tmp
 
             - name: Release
               uses: softprops/action-gh-release@v2
