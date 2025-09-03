@@ -7,23 +7,35 @@ on:
 jobs:
     run-on-dispatch:
         runs-on: ubuntu-latest
+        env:
+            VERSION: ${{ github.event.client_payload.version }}
+            TAG_NAME: v${{ github.event.client_payload.version }}
+            DENOFA_TOKEN: ${{ secrets.DENOFA_TOKEN }}
         steps:
             - name: Checkout
               uses: actions/checkout@v4
-
-            - name: Read version
-              id: read_version
-              shell: bash
-              run: |
-                  echo "version=${{ github.event.client_payload.version }}" >> $GITHUB_OUTPUT
 
             - name: Checkout Auto.dn repo
               uses: actions/checkout@v4
               with:
                   repository: AuTsing/Auto.dn
-                  ref: refs/tags/v${{ steps.read_version.outputs.version }}
+                  ref: refs/tags/$TAG_NAME
                   path: tmp/Autodn
-                  token: ${{ secrets.DENOFA_TOKEN }}
+                  token: $DENOFA_TOKEN
+
+            - name: Download release
+              run: |
+                  curl -H "Authorization: Bearer $DENOFA_TOKEN" \
+                      -H "Accept: application/vnd.github+json" \
+                      https://api.github.com/repos/AuTsing/Auto.dn/releases/tags/$TAG_NAME \
+                      > tmp/release.json
+                  filename=Denofa_$TAG_NAME_release.apk
+                  asset_id=$(jq -r '.assets[] | select(.name=="$filename") | .id' tmp/release.json)
+                  curl -L \
+                      -H "Authorization: Bearer $DENOFA_TOKEN" \
+                      -H "Accept: application/octet-stream" \
+                      https://api.github.com/repos/AuTsing/Auto.dn/releases/assets/$asset_id \
+                      -o tmp/$filename
 
             - name: Copy files
               run: |
@@ -31,44 +43,30 @@ jobs:
 
             - name: Update readme
               run: |
-                  sed -i "s/最新版本号: v.*/最新版本号: v${{ steps.read_version.outputs.version }}/" README.md
+                  sed -i "s/最新版本号: v.*/最新版本号: $TAG_NAME/" README.md
 
             - name: Commit changes
               run: |
                   git config user.name "github-actions[bot]"
                   git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
                   git add . || true
-                  git commit -m "${{ steps.read_version.outputs.version }}" || true
+                  git commit -m "$VERSION" || true
                   git push || true
-                  git tag -d "v${{ steps.read_version.outputs.version }}" || true
-                  git tag "v${{ steps.read_version.outputs.version }}" || true
-                  git push origin --delete "v${{ steps.read_version.outputs.version }}" || true
+                  git tag -d "$TAG_NAME" || true
+                  git tag "$TAG_NAME" || true
+                  git push origin --delete "$TAG_NAME" || true
                   git push --tag || true
 
             - name: Read changelog
               id: read_changelog
               uses: mindsers/changelog-reader-action@v2
               with:
-                  version: ${{ steps.read_version.outputs.version }}
-
-            - name: Download release
-              run: |
-                  curl -H "Authorization: Bearer ${{ secrets.DENOFA_TOKEN }}" \
-                      -H "Accept: application/vnd.github+json" \
-                      https://api.github.com/repos/AuTsing/Auto.dn/releases/latest \
-                      > tmp/release.json
-                  filename=Denofa_v${{ steps.read_version.outputs.version }}_release.apk
-                  asset_id=$(jq -r '.assets[] | select(.name=="$filename") | .id' tmp/release.json)
-                  curl -L \
-                      -H "Authorization: Bearer ${{ secrets.DENOFA_TOKEN }}" \
-                      -H "Accept: application/octet-stream" \
-                      https://api.github.com/repos/AuTsing/Auto.dn/releases/assets/$asset_id \
-                      -o tmp/$filename
+                  version: $VERSION
 
             - name: Release
               uses: softprops/action-gh-release@v2
               with:
-                  tag_name: v${{ steps.read_version.outputs.version }}
+                  tag_name: $TAG_NAME
                   draft: false
                   body: |
                       ## ${{ steps.read_changelog.outputs.version }} - ${{ steps.read_changelog.outputs.date }}
