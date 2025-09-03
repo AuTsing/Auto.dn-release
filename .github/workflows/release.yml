@@ -37,6 +37,7 @@ jobs:
                   git commit -m "${{ steps.read_version.outputs.version }}" || true
                   git push || true
                   git tag -d "v${{ steps.read_version.outputs.version }}" || true
+                  git tag "v${{ steps.read_version.outputs.version }}" || true
                   git push origin --delete "v${{ steps.read_version.outputs.version }}" || true
                   git push --tag || true
 
