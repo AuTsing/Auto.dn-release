@@ -15,7 +15,7 @@ jobs:
               id: get_tag_name
               shell: bash
               run: |
-                  echo "version=${{ github.event.client_payload.tag }}" >> $GITHUB_OUTPUT
+                  echo "version=${{ github.event.client_payload.version }}" >> $GITHUB_OUTPUT
 
             - name: Read Changelog
               id: read_changelog
@@ -27,8 +27,6 @@ jobs:
               uses: softprops/action-gh-release@v2
               with:
                   body: |
-                      # Denofa Change Log 更新日志
-
                       ## ${{ steps.read_changelog.outputs.version }} - ${{ steps.read_changelog.outputs.date }}
 
                       ${{ steps.read_changelog.outputs.changes }}
