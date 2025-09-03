@@ -29,6 +29,10 @@ jobs:
               run: |
                   cp tmp/denofa/CHANGELOG.md ./CHANGELOG.md
 
+            - name: Update readme
+              run: |
+                  sed -i "s/最新版本号: v.*/最新版本号: v${{ steps.read_version.outputs.version }}/" README.md
+
             - name: Commit changes
               run: |
                   git config user.name "github-actions[bot]"
