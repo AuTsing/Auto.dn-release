@@ -24,6 +24,7 @@ jobs:
                   token: ${{ env.DENOFA_TOKEN }}
 
             - name: Download release
+              id: download_release
               run: |
                   curl -H "Authorization: Bearer $DENOFA_TOKEN" \
                       -H "Accept: application/vnd.github+json" \
@@ -36,6 +37,7 @@ jobs:
                       -H "Accept: application/octet-stream" \
                       https://api.github.com/repos/AuTsing/Auto.dn/releases/assets/$asset_id \
                       -o tmp/$filename
+                  echo "file_path=(realpath tmp/$filename)" >> $GITHUB_OUTPUT
 
             - name: Copy files
               run: |
@@ -72,3 +74,4 @@ jobs:
                       ## ${{ steps.read_changelog.outputs.version }} - ${{ steps.read_changelog.outputs.date }}
 
                       ${{ steps.read_changelog.outputs.changes }}
+                  files: ${{ steps.download_release.outputs.file_path }}
