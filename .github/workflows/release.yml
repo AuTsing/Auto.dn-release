@@ -50,6 +50,7 @@ jobs:
             - name: Release
               uses: softprops/action-gh-release@v2
               with:
+                  tag_name: v${{ steps.read_version.outputs.version }}
                   body: |
                       ## ${{ steps.read_changelog.outputs.version }} - ${{ steps.read_changelog.outputs.date }}
 
