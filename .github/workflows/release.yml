@@ -19,9 +19,9 @@ jobs:
               uses: actions/checkout@v4
               with:
                   repository: AuTsing/Auto.dn
-                  ref: refs/tags/$TAG_NAME
+                  ref: refs/tags/${{ env.TAG_NAME }}
                   path: tmp/Autodn
-                  token: $DENOFA_TOKEN
+                  token: ${{ env.DENOFA_TOKEN }}
 
             - name: Download release
               run: |
@@ -61,12 +61,12 @@ jobs:
               id: read_changelog
               uses: mindsers/changelog-reader-action@v2
               with:
-                  version: $VERSION
+                  version: ${{ env.VERSION }}
 
             - name: Release
               uses: softprops/action-gh-release@v2
               with:
-                  tag_name: $TAG_NAME
+                  tag_name: ${{ env.TAG_NAME }}
                   draft: false
                   body: |
                       ## ${{ steps.read_changelog.outputs.version }} - ${{ steps.read_changelog.outputs.date }}
