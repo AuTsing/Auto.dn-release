@@ -52,8 +52,6 @@ jobs:
                   version: ${{ steps.read_version.outputs.version }}
 
             - name: Download release
-              env:
-                  GITHUB_TOKEN: ${{ secrets.DENOFA_TOKEN }}
               run: |
                   curl -H "Authorization: Bearer ${{ secrets.DENOFA_TOKEN }}" \
                       -H "Accept: application/vnd.github+json" \
