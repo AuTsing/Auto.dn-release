@@ -11,17 +11,17 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
 
-            - name: Get Tag Name
-              id: get_tag_name
+            - name: Read version
+              id: read_version
               shell: bash
               run: |
                   echo "version=${{ github.event.client_payload.version }}" >> $GITHUB_OUTPUT
 
-            - name: Read Changelog
+            - name: Read changelog
               id: read_changelog
               uses: mindsers/changelog-reader-action@v2
               with:
-                  version: ${{ steps.get_tag_name.outputs.version }}
+                  version: ${{ steps.read_version.outputs.version }}
 
             - name: Release
               uses: softprops/action-gh-release@v2
