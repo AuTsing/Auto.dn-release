@@ -37,7 +37,8 @@ jobs:
                       -H "Accept: application/octet-stream" \
                       https://api.github.com/repos/AuTsing/Auto.dn/releases/assets/$asset_id \
                       -o tmp/$filename
-                  echo "file_path=(realpath tmp/$filename)" >> $GITHUB_OUTPUT
+                  file_path=$(realpath tmp/$filename)
+                  echo "file_path=$file_path" >> $GITHUB_OUTPUT
 
             - name: Copy files
               run: |
