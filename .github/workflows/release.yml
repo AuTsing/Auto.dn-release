@@ -36,8 +36,8 @@ jobs:
                   git add .
                   git commit -m "${{ steps.read_version.outputs.version }}"
                   git push
-                  git tag -d "v${{ steps.read_version.outputs.version }}"
-                  git push origin --delete "v${{ steps.read_version.outputs.version }}"
+                  git tag -d "v${{ steps.read_version.outputs.version }}" || true
+                  git push origin --delete "v${{ steps.read_version.outputs.version }}" || true
                   git push --tag
 
             - name: Read changelog
