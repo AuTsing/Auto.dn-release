@@ -33,12 +33,12 @@ jobs:
               run: |
                   git config user.name "github-actions[bot]"
                   git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-                  git add .
-                  git commit -m "${{ steps.read_version.outputs.version }}"
-                  git push
+                  git add . || true
+                  git commit -m "${{ steps.read_version.outputs.version }}" || true
+                  git push || true
                   git tag -d "v${{ steps.read_version.outputs.version }}" || true
                   git push origin --delete "v${{ steps.read_version.outputs.version }}" || true
-                  git push --tag
+                  git push --tag || true
 
             - name: Read changelog
               id: read_changelog
