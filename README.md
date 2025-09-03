@@ -1,6 +1,6 @@
 # Auto.dn 发布仓库
 
-最新版本号: v1.8.2
+最新版本号: v2.0.0
 
 主页: https://denofa.qzz.io
 
