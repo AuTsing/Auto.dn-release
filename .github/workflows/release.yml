@@ -25,12 +25,6 @@ jobs:
                   path: tmp/denofa
                   token: ${{ secrets.DENOFA_TOKEN }}
 
-            - name: Read changelog
-              id: read_changelog
-              uses: mindsers/changelog-reader-action@v2
-              with:
-                  version: ${{ steps.read_version.outputs.version }}
-
             - name: Copy files
               run: |
                   cp tmp/denofa/CHANGELOG.md ./CHANGELOG.md
@@ -45,6 +39,12 @@ jobs:
                   git tag -d "v${{ steps.read_version.outputs.version }}"
                   git push origin --delete "v${{ steps.read_version.outputs.version }}"
                   git push --tag
+
+            - name: Read changelog
+              id: read_changelog
+              uses: mindsers/changelog-reader-action@v2
+              with:
+                  version: ${{ steps.read_version.outputs.version }}
 
             - name: Release
               uses: softprops/action-gh-release@v2
