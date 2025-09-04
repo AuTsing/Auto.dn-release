@@ -35,10 +35,10 @@ jobs:
                   curl -L \
                       -H "Authorization: Bearer $DENOFA_TOKEN" \
                       -H "Accept: application/octet-stream" \
-                      https://api.github.com/repos/AuTsing/Auto.dn/releases/assets/$asset_id \
+                      https://api.github.com/repos/AuTsing/Auto.dn/releases/assets/${asset_id} \
                       -o tmp/$filename
                   file_path=$(realpath tmp/$filename)
-                  echo "file_path=$file_path" >> $GITHUB_OUTPUT
+                  echo "file_path=${file_path}" >> $GITHUB_OUTPUT
 
             - name: Copy files
               run: |
