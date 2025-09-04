@@ -26,18 +26,18 @@ jobs:
             - name: Download release
               id: download_release
               run: |
-                  curl -H "Authorization: Bearer $DENOFA_TOKEN" \
+                  curl -H "Authorization: Bearer ${{ env.DENOFA_TOKEN }}" \
                       -H "Accept: application/vnd.github+json" \
                       https://api.github.com/repos/AuTsing/Auto.dn/releases/tags/${{ env.TAG_NAME }} \
                       > tmp/release.json
                   filename="Denofa_${{ env.TAG_NAME }}_release.apk"
-                  asset_id=$(jq -r '.assets[] | select(.name=="${filename}") | .id' tmp/release.json)
+                  asset_id=$(jq -r --arg FILENAME "$filename" '.assets[]? | select(.name==$FILENAME) | .id' tmp/release.json)
                   curl -L \
-                      -H "Authorization: Bearer $DENOFA_TOKEN" \
+                      -H "Authorization: Bearer ${{ env.DENOFA_TOKEN }}" \
                       -H "Accept: application/octet-stream" \
-                      https://api.github.com/repos/AuTsing/Auto.dn/releases/assets/${asset_id} \
-                      -o tmp/${filename}
-                  file_path=$(realpath tmp/${filename})
+                      https://api.github.com/repos/AuTsing/Auto.dn/releases/assets/$asset_id \
+                      -o tmp/$filename
+                  file_path=$(realpath tmp/$filename)
                   echo "file_path=${file_path}" >> $GITHUB_OUTPUT
 
             - name: Copy files
