@@ -28,9 +28,9 @@ jobs:
               run: |
                   curl -H "Authorization: Bearer $DENOFA_TOKEN" \
                       -H "Accept: application/vnd.github+json" \
-                      https://api.github.com/repos/AuTsing/Auto.dn/releases/tags/$TAG_NAME \
+                      https://api.github.com/repos/AuTsing/Auto.dn/releases/tags/${{ env.TAG_NAME }} \
                       > tmp/release.json
-                  filename="Denofa_$TAG_NAME_release.apk"
+                  filename="Denofa_${{ env.TAG_NAME }}_release.apk"
                   asset_id=$(jq -r '.assets[] | select(.name=="$filename") | .id' tmp/release.json)
                   curl -L \
                       -H "Authorization: Bearer $DENOFA_TOKEN" \
@@ -46,18 +46,18 @@ jobs:
 
             - name: Update readme
               run: |
-                  sed -i "s/最新版本号: v.*/最新版本号: $TAG_NAME/" README.md
+                  sed -i "s/最新版本号: v.*/最新版本号: ${{ env.TAG_NAME }}/" README.md
 
             - name: Commit changes
               run: |
                   git config user.name "github-actions[bot]"
                   git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
                   git add . || true
-                  git commit -m "$VERSION" || true
+                  git commit -m ${{ env.VERSION }} || true
                   git push || true
-                  git tag -d "$TAG_NAME" || true
-                  git tag "$TAG_NAME" || true
-                  git push origin --delete "$TAG_NAME" || true
+                  git tag -d "${{ env.TAG_NAME }}" || true
+                  git tag "${{ env.TAG_NAME }}" || true
+                  git push origin --delete "${{ env.TAG_NAME }}" || true
                   git push --tag || true
 
             - name: Read changelog
