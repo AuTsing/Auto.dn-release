@@ -1,6 +1,6 @@
 # Auto.dn 更新日志
 
-## [2.0.0] - 2025-09-01
+## [2.0.0] - 2025-09-12
 
 -   Denofa 正式更名为 Auto.dn
 -   Core 更新至 [0.15.0](https://autodn.qzz.io/api/CHANGELOG.html#_0-15-0-2025-09-11)
