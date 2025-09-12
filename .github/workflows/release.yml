@@ -2,7 +2,7 @@ name: Release
 
 on:
     repository_dispatch:
-        types: [auto-generate-release]
+        types: [dispatch-release]
 
 jobs:
     run-on-dispatch:
@@ -20,32 +20,26 @@ jobs:
               with:
                   repository: AuTsing/Auto.dn
                   ref: refs/tags/${{ env.TAG_NAME }}
-                  path: tmp/Autodn
+                  path: ./tmp/Autodn
                   token: ${{ env.DENOFA_TOKEN }}
 
             - name: Download release
-              id: download_release
               run: |
                   curl -H "Authorization: Bearer ${{ env.DENOFA_TOKEN }}" \
                       -H "Accept: application/vnd.github+json" \
                       https://api.github.com/repos/AuTsing/Auto.dn/releases/tags/${{ env.TAG_NAME }} \
-                      > tmp/release.json
-                  filename="Denofa_${{ env.TAG_NAME }}_release.apk"
-                  asset_id=$(jq -r --arg FILENAME "$filename" '.assets[]? | select(.name==$FILENAME) | .id' tmp/release.json)
+                      > ./tmp/release.json
+                  filename="Autodn_${{ env.TAG_NAME }}_release.apk"
+                  asset_id=$(jq -r --arg FILENAME "$filename" '.assets[]? | select(.name==$FILENAME) | .id' ./tmp/release.json)
                   curl -L \
                       -H "Authorization: Bearer ${{ env.DENOFA_TOKEN }}" \
                       -H "Accept: application/octet-stream" \
                       https://api.github.com/repos/AuTsing/Auto.dn/releases/assets/$asset_id \
-                      -o tmp/$filename
-                  file_path=$(realpath tmp/$filename)
-                  echo "file_path=${file_path}" >> $GITHUB_OUTPUT
+                      -o ./tmp/$filename
 
-            - name: Copy files
+            - name: Update repo
               run: |
-                  cp tmp/Autodn/CHANGELOG.md ./CHANGELOG.md
-
-            - name: Update readme
-              run: |
+                  cp ./tmp/Autodn/CHANGELOG.md ./CHANGELOG.md
                   sed -i "s/最新版本号: v.*/最新版本号: ${{ env.TAG_NAME }}/" README.md
 
             - name: Commit changes
@@ -71,8 +65,8 @@ jobs:
               with:
                   tag_name: ${{ env.TAG_NAME }}
                   draft: false
+                  files: ./tmp/*.apk
                   body: |
                       ## ${{ steps.read_changelog.outputs.version }} - ${{ steps.read_changelog.outputs.date }}
 
                       ${{ steps.read_changelog.outputs.changes }}
-                  files: ${{ steps.download_release.outputs.file_path }}
