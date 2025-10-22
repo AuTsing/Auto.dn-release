@@ -1,6 +1,6 @@
 # Auto.dn 发布仓库
 
-最新版本号: v3.0.1
+最新版本号: v3.0.2
 
 主页: https://autodn.qzz.io
 
