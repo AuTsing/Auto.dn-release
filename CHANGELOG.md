@@ -1,5 +1,29 @@
 # Auto.dn 更新日志
 
+## [3.4.0] - 2026-03-25
+
+- 更新WS服务器数据结构，使用CBOR二进制结构，体积更小，速度更快
+- WS API 接口更新: 运行工程 ['Run', { id: string, data: { name: string }}]
+- WS API 接口更新: 运行工程结果 ['RunResult', { id: string, data: { success: boolean, message: string }}]
+- WS API 接口更新: 停止工程 ['Stop', { id: string, data: { name: string }}]
+- WS API 接口更新: 停止工程结果 ['StopResult', { id: string, data: { success: boolean, message: string }}]
+- WS API 接口更新: 删除文件 ['Delete', { id: string, data: { path: string }}]
+- WS API 接口更新: 删除文件结果 ['DeleteResult', { id: string, data: { success: boolean, message: string }}]
+- WS API 接口更新: 上传文件 ['Upload', { id: string, data: { path: string, file: byteString }}]
+- WS API 接口更新: 上传文件结果 ['UploadResult', { id: string, data: { success: boolean, message: string }}]
+- WS API 接口更新: 下载文件 ['Download', { id: string, data: { path: string }}]
+- WS API 接口更新: 下载文件结果 ['DownloadResult', { id: string, data: { success: boolean, message: string, file: byteString }}]
+- WS API 接口更新: 写入日志 ['Log', { id: string, data: { level: string, message: string }}]
+- WS API 接口更新: 写入日志结果 ['LogLogResult', { id: string, data: { success: boolean, message: string }}]
+- WS API 接口更新: 屏幕截图 ['Snapshot', { id: string, data: {}}]
+- WS API 接口更新: 屏幕截图结果 ['SnapshotResult', { id: string, data: { success: boolean, message: string, file: byteString }}]
+- WS API 接口更新: 设置运行中的工程 ['SetRunningProjects', { id: string, data: { projects: string[] }}]
+- WS API 接口更新: 设置运行中的工程结果 ['SetRunningProjectsResult', { id: string, data: { success: boolean, message: string }}]
+- WS API 接口更新: 获取运行中的工程 ['GetRunningProjects', { id: string, data: {}}]
+- WS API 接口更新: 获取运行中的工程结果 ['GetRunningProjectsResult', { id: string, data: { success: boolean, message: string, projects: string[] }}]
+- 修复从文件选择器导入工程报错的问题
+- 修复编辑器崩溃的问题
+
 ## [3.3.1] - 2026-03-18
 
 - autodncore 内核升级至 v0.23.0
