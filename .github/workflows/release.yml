@@ -14,14 +14,14 @@ jobs:
 
             - name: Download release
               run: |
-                  curl -H "Authorization: Bearer ${{ secrets.DENOFA_TOKEN }}" \
+                  curl -H "Authorization: Bearer ${{ secrets.AUTODN_TOKEN }}" \
                       -H "Accept: application/vnd.github+json" \
                       https://api.github.com/repos/AuTsing/Auto.dn/releases/tags/$GITHUB_REF_NAME \
                       > ./tmp/release.json
                   filename="Autodn_$GITHUB_REF_NAME_release-signed.apk"
                   asset_id=$(jq -r --arg FILENAME "$filename" '.assets[]? | select(.name==$FILENAME) | .id' ./tmp/release.json)
                   curl -L \
-                      -H "Authorization: Bearer ${{ secrets.DENOFA_TOKEN }}" \
+                      -H "Authorization: Bearer ${{ secrets.AUTODN_TOKEN }}" \
                       -H "Accept: application/octet-stream" \
                       https://api.github.com/repos/AuTsing/Auto.dn/releases/assets/$asset_id \
                       -o ./tmp/Autodn.apk
