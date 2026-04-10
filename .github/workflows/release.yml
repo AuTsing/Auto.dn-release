@@ -14,6 +14,7 @@ jobs:
 
             - name: Download release
               run: |
+                  mkdir tmp
                   curl -H "Authorization: Bearer ${{ secrets.AUTODN_TOKEN }}" \
                       -H "Accept: application/vnd.github+json" \
                       https://api.github.com/repos/AuTsing/Auto.dn/releases/tags/$GITHUB_REF_NAME \
