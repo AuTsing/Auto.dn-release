@@ -22,6 +22,8 @@ Auto.dn 尚未完全开源，该仓库仅用作发布仓库。
 
 - 仓库: [Github](https://github.com/AuTsing/Auto.dn-extension)
 
+- 下载: [VSCode](https://marketplace.visualstudio.com/items?itemName=autsing.autodn-extension), [OVSX](https://open-vsx.org/extension/AuTsing/autodn-extension)
+
 ### WEBSITE 网站
 
 - 开源协议: [MIT](https://github.com/AuTsing/Auto.dn-website?tab=MIT-1-ov-file)
