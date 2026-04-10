@@ -1,71 +1,46 @@
 name: Release
 
 on:
-    repository_dispatch:
-        types: [dispatch-release]
+    push:
+        tags:
+            - 'v*'
 
 jobs:
-    run-on-dispatch:
+    release:
         runs-on: ubuntu-latest
-        env:
-            VERSION: ${{ github.event.client_payload.version }}
-            TAG_NAME: v${{ github.event.client_payload.version }}
-            DENOFA_TOKEN: ${{ secrets.DENOFA_TOKEN }}
         steps:
             - name: Checkout
               uses: actions/checkout@v4
 
-            - name: Checkout Auto.dn repo
-              uses: actions/checkout@v4
-              with:
-                  repository: AuTsing/Auto.dn
-                  ref: refs/tags/${{ env.TAG_NAME }}
-                  path: ./tmp/Autodn
-                  token: ${{ env.DENOFA_TOKEN }}
-
             - name: Download release
               run: |
-                  curl -H "Authorization: Bearer ${{ env.DENOFA_TOKEN }}" \
+                  curl -H "Authorization: Bearer ${{ secrets.DENOFA_TOKEN }}" \
                       -H "Accept: application/vnd.github+json" \
-                      https://api.github.com/repos/AuTsing/Auto.dn/releases/tags/${{ env.TAG_NAME }} \
+                      https://api.github.com/repos/AuTsing/Auto.dn/releases/tags/$GITHUB_REF_NAME \
                       > ./tmp/release.json
-                  filename="Autodn_${{ env.TAG_NAME }}_release.apk"
+                  filename="Autodn_$GITHUB_REF_NAME_release-signed.apk"
                   asset_id=$(jq -r --arg FILENAME "$filename" '.assets[]? | select(.name==$FILENAME) | .id' ./tmp/release.json)
                   curl -L \
-                      -H "Authorization: Bearer ${{ env.DENOFA_TOKEN }}" \
+                      -H "Authorization: Bearer ${{ secrets.DENOFA_TOKEN }}" \
                       -H "Accept: application/octet-stream" \
                       https://api.github.com/repos/AuTsing/Auto.dn/releases/assets/$asset_id \
                       -o ./tmp/Autodn.apk
 
-            - name: Update repo
-              run: |
-                  cp ./tmp/Autodn/CHANGELOG.md ./CHANGELOG.md
-                  sed -i "s/最新版本号: v.*/最新版本号: ${{ env.TAG_NAME }}/" README.md
-
-            - name: Commit changes
-              run: |
-                  git config user.name "github-actions[bot]"
-                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-                  git add . || true
-                  git commit -m ${{ env.VERSION }} || true
-                  git push || true
-                  git tag -d "${{ env.TAG_NAME }}" || true
-                  git tag "${{ env.TAG_NAME }}" || true
-                  git push origin --delete "${{ env.TAG_NAME }}" || true
-                  git push --tag || true
+            - name: Read version
+              id: read_version
+              run: echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
 
             - name: Read changelog
               id: read_changelog
               uses: mindsers/changelog-reader-action@v2
               with:
-                  version: ${{ env.VERSION }}
+                  version: ${{ steps.read_version.outputs.version }}
 
             - name: Release
               uses: softprops/action-gh-release@v2
               with:
-                  tag_name: ${{ env.TAG_NAME }}
                   draft: false
-                  files: ./tmp/*.apk
+                  files: ./tmp/Autodn.apk
                   body: |
                       ## ${{ steps.read_changelog.outputs.version }} - ${{ steps.read_changelog.outputs.date }}
 
