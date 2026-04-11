@@ -21,6 +21,7 @@ jobs:
               id: download
               env:
                   TAG: ${{ github.ref_name }}
+                  TOKEN: ${{ secrets.AUTODN_TOKEN }}
               run: |
                   npm i @actions/core
                   node download.js
