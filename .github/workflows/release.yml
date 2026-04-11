@@ -24,7 +24,7 @@ jobs:
                   TOKEN: ${{ secrets.AUTODN_TOKEN }}
               run: |
                   npm i @actions/core
-                  node download.js
+                  node scripts/download.js
 
             - name: Release
               uses: softprops/action-gh-release@v2
