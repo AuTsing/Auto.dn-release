@@ -17,39 +17,17 @@ jobs:
               with:
                   node-version: 22
 
-            - name: Download release
+            - name: Download
+              id: download
               env:
                   TAG: ${{ github.ref_name }}
               run: |
-                  mkdir tmp
-                  curl -H "Authorization: Bearer ${{ secrets.AUTODN_TOKEN }}" \
-                      -H "Accept: application/vnd.github+json" \
-                      https://api.github.com/repos/AuTsing/Auto.dn/releases/tags/${{ env.TAG }} \
-                      > ./tmp/release.json
-                  filename="Autodn_${{ env.TAG }}_release-signed.apk"
-                  asset_id=$(jq -r --arg FILENAME "$filename" '.assets[]? | select(.name==$FILENAME) | .id' ./tmp/release.json)
-                  curl -L \
-                      -H "Authorization: Bearer ${{ secrets.AUTODN_TOKEN }}" \
-                      -H "Accept: application/octet-stream" \
-                      https://api.github.com/repos/AuTsing/Auto.dn/releases/assets/$asset_id \
-                      -o ./tmp/Autodn.apk
-
-            - name: Read version
-              id: read_version
-              run: echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
-
-            - name: Read changelog
-              id: read_changelog
-              uses: mindsers/changelog-reader-action@v2
-              with:
-                  version: ${{ steps.read_version.outputs.version }}
+                  npm i @actions/core
+                  node download.js
 
             - name: Release
               uses: softprops/action-gh-release@v2
               with:
                   draft: false
-                  files: ./tmp/Autodn.apk
-                  body: |
-                      ## ${{ steps.read_changelog.outputs.version }} - ${{ steps.read_changelog.outputs.date }}
-
-                      ${{ steps.read_changelog.outputs.changes }}
+                  files: ${{ steps.download.outputs.files }}
+                  body: ${{ steps.download.outputs.body }}
