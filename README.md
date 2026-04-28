@@ -12,7 +12,7 @@ Auto.dn 尚未完全开源，该仓库仅用作发布仓库。
 
 - 开源协议: 尚未开源
 
-- 版本号: v3.5.1
+- 版本号: v3.6.0
 
 - 下载: [Github Release](https://github.com/AuTsing/Auto.dn-release/releases)
 
